@@ -1,0 +1,382 @@
+/*
+ * _______________________________________________________________________________
+ *
+ * Copyright (c) 2016. Suminda Sirinath Salpitikorala Dharmasena and
+ *     Collections Project Contributors
+ *
+ * Collections, is a collection of works and / or artifacts submitted
+ * and / or contributed by multiple authors ("Project Contributors"),
+ * collectively creating a larger work(s) and / or artifact(s) (the / this
+ * "Project"). This project is licensed under the terms of either:
+ *  - the Apache License, Version 2.0 (ASL 2.0), or
+ *  - the Academic Free License, Version 3.0 (AFL 3.0), or
+ *  - the MIT License (MIT), collectively referred as the "Project Licenses".
+ * As a recipient of this Project, you may choose which license to receive
+ * the Project under (except as noted in other explicit declarations and / or
+ * notices of intellectual property rights). Some artifacts and / or works may
+ * not be the intellectual property of the Project Contributors. These are
+ * noted in explicit declarations and / or notices of intellectual property
+ * rights.
+ *
+ * This Project uses a shared copyright model. Each contributor maintains
+ * copyright over their contributions and / or submissions to this Project.
+ * Contributions and / or submissions are typically transformation,
+ * modification or adaptation of existing artifacts or works (underlying work)
+ * resulting in derivative works. Thus, the Project artifacts, in its entirety
+ * is not the copyright of any single person or institution. Instead, it is the
+ * collective copyright of all those who have made contributions and / or
+ * submissions to the Project.
+ *
+ * No contributions and / or submissions are allowed under licenses which are
+ * fundamentally incompatible with the Project Licenses under which this
+ * Project is licenced under. By contributing or making a submission to this
+ * Project you hereby understand and agree to the following:
+ *  - your contributions and / or submissions are licensed under the terms of
+ *    all the Project Licenses whereas the recipients are free to choose under
+ *    which license the contributions and submission is received under;
+ *  - you will only make contributions and / or submissions which you own the
+ *    intellectual property right or have appropriate and adequate licenses,
+ *    and in addition have the authority and ability to make the contributions
+ *    and / or submissions, under the terms of the Project Licenses, without
+ *    encumbrances, limitations and restrictions whatsoever;
+ *  - you comply and adhere to the adopted: code of conduct, norms, etiquettes
+ *    and protocols of the Project in all you dealing with the Project.
+ *
+ * _______________________________________________________________________________
+ *
+ * Copyright (c) 2016. Suminda Sirinath Salpitikorala Dharmasena and
+ *     Collections Project Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * _______________________________________________________________________________
+ *
+ * Copyright (c) 2016. Suminda Sirinath Salpitikorala Dharmasena and
+ *     Collections Project Contributors
+ *
+ * Licensed under the Academic Free License, Version 3.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * _______________________________________________________________________________
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2016. Suminda Sirinath Salpitikorala Dharmasena and
+ *     Collections Project Contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ *
+ * _______________________________________________________________________________
+ */
+
+import java.nio.file.Files
+import java.nio.file.Paths
+
+buildscript {
+    repositories {
+        mavenLocal()
+        ivy { url System.getProperty("user.home") + '/.ivy2' }
+        maven { url "http://dl.bintray.com/sirinath/MicroTrader" }
+        jcenter()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+    configurations.all {
+        resolutionStrategy {
+            cacheDynamicVersionsFor 0, 'seconds'
+            cacheChangingModulesFor 0, 'seconds'
+        }
+    }
+    dependencies {
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'com.github.kt3k.coveralls' version '2.6.3'
+    id 'net.saliman.cobertura' version '2.3.1'
+    id 'com.jfrog.bintray' version '1.7'
+    id 'com.jfrog.artifactory' version '4.4.0'
+    id 'co.riiid.gradle' version '0.4.2'
+}
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'ivy-publish'
+apply plugin: 'signing'
+apply plugin: 'io.codearte.nexus-staging'
+
+
+defaultTasks 'clean', 'build', 'jar', 'install'
+
+group 'com.github.MicroTrader'
+version '0.1.0-SNAPSHOT'
+description 'Data Structures for Internal Use'
+
+ext {
+    org = 'MicroTrader'
+    repo = org + '/' + project.name
+    releaseNotesFile = 'RELEASE_NOTES.md'
+    host = 'github.com'
+    hostUrl = 'https://' + host + '/'
+    orgUrl = hostUrl + org
+    websiteUrl = hostUrl + repo
+    vcsUrl = websiteUrl + '.git'
+    scmUrl = 'scm:git@' + host + ':' + repo + '.git'
+    issueTrackerUrl = websiteUrl + '/issues'
+    ossrhUsername = ((project.hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('OSSRH_USER')) ?: System.getProperty('ossrh.user')) ?: ' '
+    ossrhPassword = ((project.hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('OSSRH_PASSWORD')) ?: System.getProperty('ossrh.password')) ?: ' '
+    bintray_user = ((project.hasProperty('bintray_user') ? bintray_user : System.getenv('BINTRAY_USER')) ?: System.getProperty('bintray.user')) ?: ' '
+    bintray_api_key = ((project.hasProperty('bintray_api_key') ? bintray_api_key : System.getenv('BINTRAY_KEY')) ?: System.getProperty('bintray.apikey')) ?: ' '
+    artifactory_user = ((project.hasProperty('artifactory_user') ? artifactory_user : System.getenv('ARTIFACTORY_USER')) ?: System.getProperty('artifactory.user')) ?: ' '
+    artifactory_password = ((project.hasProperty('artifactory_password') ? artifactory_password : System.getenv('ARTIFACTORY_PASSWORD')) ?: System.getProperty('artifactory.password')) ?: ' '
+    github_api_key = ((project.hasProperty('github_api_key') ? github_api_key : System.getenv('GITHUB_KEY')) ?: System.getProperty('github.apikey')) ?: ' '
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.0'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    ivy { url System.getProperty("user.home") + '/.ivy2' }
+    maven { url "http://dl.bintray.com/sirinath/MicroTrader" }
+    jcenter()
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile 'com.github.ObjectLayout:ObjectLayout:854efb835f'
+    compile 'it.unimi.dsi:fastutil:7.0.13'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+cobertura.coverageFormats = ['html', 'xml']
+
+if (sourceSets.main.hasProperty('groovy'))
+    cobertura.coverageSourceDirs = sourceSets.main.groovy.srcDirs
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled = true
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from tasks.javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    publications {
+        ivyJava(IvyPublication) {
+            from components.java
+        }
+    }
+}
+
+bintray {
+    user = bintray_user
+    key = bintray_api_key
+
+    publications = ['mavenJava']
+
+    dryRun = false
+    publish = true
+
+    pkg {
+        name = project.name
+        repo = project.org
+        userOrg = project.org.toString().toLowerCase()
+
+        desc = project.description
+
+        githubRepo = project.repo
+        githubReleaseNotesFile = project.releaseNotesFile
+        websiteUrl = project.websiteUrl
+        vcsUrl = project.vcsUrl
+        issueTrackerUrl = project.issueTrackerUrl
+        licenses = ['Apache-2.0', 'AFL-3.0', 'MIT']
+        publicDownloadNumbers = true
+
+        version {
+            name = project.version
+
+            vcsTag = 'v' + project.version
+
+            // TODO: Update when ready to publish in maven central
+            mavenCentralSync {
+                sync = false
+                user = ossrhUsername
+                password = ossrhPassword
+                close = '1'
+            }
+        }
+    }
+}
+
+artifactory {
+    contextUrl = 'https://oss.jfrog.org/artifactory'
+    publish {
+        repository {
+            if (project.version.endsWith('-SNAPSHOT'))
+                repoKey = 'libs-snapshot' // 'oss-snapshot-local'
+            else
+                repoKey = 'libs-release' // 'oss-release-local'
+
+            username = artifactory_user
+            password = artifactory_password
+        }
+        defaults {
+            publications('mavenJava', 'ivyJava')
+        }
+    }
+}
+
+artifactoryPublish {
+    skip = !artifactory_user?.trim()
+}
+
+artifacts {
+    archives jar
+
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") && project.properties.containsKey('signing.keyId') }
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name project.name
+                packaging 'jar'
+                description project.description
+                url project.websiteUrl
+
+                scm {
+                    url project.scmUrl
+                    connection project.scmUrl
+                    developerConnection project.scmUrl
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                    license {
+                        name 'Academic Free License, Version 3.0'
+                        url 'https://opensource.org/licenses/AFL-3.0'
+                        distribution 'repo'
+                    }
+                    license {
+                        name 'The MIT License'
+                        url 'https://opensource.org/licenses/MIT'
+                        distribution 'repo'
+                    }
+                }
+
+                organization {
+                    name project.org
+                    url project.orgUrl
+                }
+
+                developers {
+                    developer {
+                        id 'sirinath'
+                        name 'Suminda Sirinath Salpitikorala Dharmasena'
+                        url 'https://twitter.com/sirinath'
+                        email 'sirinath1978m@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+github {
+    owner = project.org
+    repo = project.name
+    token = project.github_api_key
+    tagName = project.version
+    targetCommitish = 'master'
+    name = 'v' + project.version
+    body = Files.exists(Paths.get('' + projectDir + '/' + releaseNotesFile)) ?
+            new File('' + projectDir + '/' + releaseNotesFile).text :
+            (Files.exists(Paths.get('' + baseDir + '/' + releaseNotesFile)) ?
+                    new File('' + baseDir + '/' + releaseNotesFile).text : '')
+    assets = [
+            "${buildDir}/libs/${project.name}-${project.version}.jar",
+            "${buildDir}/libs/${project.name}-${project.version}-javadoc.jar",
+            "${buildDir}/libs/${project.name}-${project.version}-sources.jar"
+    ]
+}
