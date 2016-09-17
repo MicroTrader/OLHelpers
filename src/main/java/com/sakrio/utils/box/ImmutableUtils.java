@@ -103,7 +103,7 @@
  * _______________________________________________________________________________
  */
 
-package main.java.com.sakrio.utils.box;
+package com.sakrio.utils.box;
 
 
 import com.sakrio.utils.box.immutable.*;

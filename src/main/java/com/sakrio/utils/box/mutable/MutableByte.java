@@ -104,7 +104,7 @@
  */
 
 
-package main.java.com.sakrio.utils.box.mutable;
+package com.sakrio.utils.box.mutable;
 
 
 import com.sakrio.utils.UnsafeAccess;

@@ -103,7 +103,7 @@
  * _______________________________________________________________________________
  */
 
-package main.java.com.sakrio.collections.objectlayout;
+package com.sakrio.collections.objectlayout;
 
 import com.sakrio.collections.objectlayout.arrays.IntrinsicHelpers;
 import org.ObjectLayout.CtorAndArgs;

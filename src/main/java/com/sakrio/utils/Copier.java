@@ -103,7 +103,7 @@
  * _______________________________________________________________________________
  */
 
-package main.java.com.sakrio.utils;
+package com.sakrio.utils;
 
 /**
  * Created by sirinath on 07/09/2016.

@@ -103,7 +103,7 @@
  * _______________________________________________________________________________
  */
 
-package main.java.com.sakrio.utils;
+package com.sakrio.utils;
 
 import sun.misc.Unsafe;
 

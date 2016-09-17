@@ -103,7 +103,7 @@
  * _______________________________________________________________________________
  */
 
-package main.java.com.sakrio.collections.objectlayout.arrays;
+package com.sakrio.collections.objectlayout.arrays;
 
 import org.ObjectLayout.CtorAndArgs;
 

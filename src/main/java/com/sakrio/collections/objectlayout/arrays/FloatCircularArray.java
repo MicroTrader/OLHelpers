@@ -103,7 +103,7 @@
  * _______________________________________________________________________________
  */
 
-package main.java.com.sakrio.collections.objectlayout.arrays;
+package com.sakrio.collections.objectlayout.arrays;
 
 import com.sakrio.collections.objectlayout.arrays.templates.AbstractGenericCircularArrayCartridge;
 import com.sakrio.collections.objectlayout.arrays.templates.FloatCircularArrayCartridge;

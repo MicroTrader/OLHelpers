@@ -103,7 +103,7 @@
  * _______________________________________________________________________________
  */
 
-package main.java.com.sakrio.collections.objectlayout;
+package com.sakrio.collections.objectlayout;
 
 import java.util.function.BiFunction;
 

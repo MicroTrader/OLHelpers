@@ -103,7 +103,7 @@
  * _______________________________________________________________________________
  */
 
-package main.java.com.sakrio.collections.objectlayout.arrays.templates;
+package com.sakrio.collections.objectlayout.arrays.templates;
 
 /**
  * Created by sirinath on 07/09/2016.

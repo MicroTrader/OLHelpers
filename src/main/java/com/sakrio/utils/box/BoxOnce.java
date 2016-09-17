@@ -103,7 +103,7 @@
  * _______________________________________________________________________________
  */
 
-package main.java.com.sakrio.utils.box;
+package com.sakrio.utils.box;
 
 import java.io.Serializable;
 
